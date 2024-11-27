@@ -1,12 +1,12 @@
 <?php 
 
-namespace App\Controller;
+namespace Coaster\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class AppController extends AbstractController{
+class CoasterController extends AbstractController{
     
     #[Route('/')]
     public function index(): Response {
@@ -14,6 +14,3 @@ class AppController extends AbstractController{
     }
 }
 ?>
-
-
-
