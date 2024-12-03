@@ -17,7 +17,7 @@ class CoasterType extends AbstractType
             ->add('maxSpeed', options:['label' => 'Vitesse Max du Coaster',])
             ->add('length', options:['label' => 'Longueur du Coaster',])
             ->add('maxHeight', options:['label' => 'Hauteur Max du Coaster',])
-            ->add('operating', options:['label' => 'Est opérationnel',])
+            ->add('operating', options:['label' => 'En fonctionnement',])
         ;
     }
 
