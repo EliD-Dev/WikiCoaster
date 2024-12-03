@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier le Park{% endblock %}
+
+{% block body %}
+    <h1>Modifier le Park</h1>
+
+    {{ include('park/_form.html.twig', {'button_label': 'Modifier'}) }}
+
+    <a href="{{ path('app_park_index') }}" class="btn btn-secondary mb-3">Retour</a>
+
+    {{ include('park/_delete_form.html.twig') }}
+{% endblock %}

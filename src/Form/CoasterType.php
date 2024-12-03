@@ -3,10 +3,11 @@
 namespace App\Form;
 
 use App\Entity\Coaster;
-use PhpParser\Node\Stmt\Label;
+use App\Entity\Park;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class CoasterType extends AbstractType
 {
@@ -17,6 +18,7 @@ class CoasterType extends AbstractType
             ->add('maxSpeed', options:['label' => 'Vitesse Max du Coaster',])
             ->add('length', options:['label' => 'Longueur du Coaster',])
             ->add('maxHeight', options:['label' => 'Hauteur Max du Coaster',])
+            ->add('park', EntityType::class, ['class' => Park::class,])
             ->add('operating', options:['label' => 'En fonctionnement',])
         ;
     }

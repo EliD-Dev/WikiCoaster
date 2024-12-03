@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Park index{% endblock %}
+
+{% block body %}
+    <h1>Liste des Parks</h1>
+
+    <a href="{{ path('app_park_new') }}" class="btn btn-primary mb-3">Ajouter un Park</a>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Pays</th>
+                <th>Année d'ouverture</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for park in parks %}
+            <tr>
+                <td>{{ park.id }}</td>
+                <td>{{ park.name }}</td>
+                <td>{{ park.country }}</td>
+                <td>{{ park.openingYear }}</td>
+                <td>
+                    <a href="{{ path('app_park_edit', { id: park.id }) }}" class="btn btn-secondary btn-sm">Modifier</a>
+                    <a href="{{ path('app_park_show', { id: park.id }) }}" class="btn btn-success btn-sm">Afficher</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5" class="text-center">Aucun park trouvé.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

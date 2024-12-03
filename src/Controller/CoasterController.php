@@ -62,7 +62,7 @@ class CoasterController extends AbstractController{
         return $this->render('coaster/edit.html.twig', ['coasterForm' => $form->createView(),]);
     }
 
-    #[Route('/coaster/{id}/delete', name: 'app_coaster_delete', methods: ['POST'])]
+    #[Route('/coaster/{id}/delete', name: 'app_coaster_delete')]
     public function delete(Coaster $coaster, Request $request, EntityManagerInterface $em): Response {
         // Vérifier la validité du token CSRF
         if ($this->isCsrfTokenValid('delete' . $coaster->getId(), $request->request->get('_token'))) {
@@ -76,7 +76,7 @@ class CoasterController extends AbstractController{
 
         dump($coaster);
 
-        return $this->redirectToRoute('app_coaster_index');
+        return $this->render('coaster/delete.html.twig', ['coaster' => $coaster,]);
     }
 }
 ?>
