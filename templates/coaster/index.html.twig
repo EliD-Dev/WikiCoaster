@@ -17,6 +17,7 @@
                 <th>Hauteur max</th>
                 <th>En fonctionnement</th>
                 <th>Park</th>
+                <th>Catégories</th>
                 <th>Modifier</th>
                 <th>Supprimer</th>
             </tr>
@@ -31,12 +32,19 @@
                     <td>{{ coaster.maxHeight }}m</td>
                     <td>{{ coaster.operating ? 'Oui' : 'Non' }}</td>
                     <td>{{ coaster.getPark() }}</td>
+                    <td>
+                        {% for category in coaster.categories %}
+                            <span style="background-color: {{ category.color }}; color: white; padding: 2px 4px; border-radius: 4px;">
+                                {{ category.name }}
+                            </span>
+                        {% endfor %}
+                    </td>
                     <td><a href="{{ path('app_coaster_edit', { id: coaster.id }) }}" class="btn btn-secondary btn-sm">Modifier</a></td>
                     <td><a href="{{ path('app_coaster_delete', { id: coaster.id }) }}" class="btn btn-danger btn-sm">Supprimer</a></td>
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="9" class="text-center">Aucun coaster trouvé.</td>
+                    <td colspan="10" class="text-center">Aucun coaster trouvé.</td>
                 </tr>
             {% endfor %}
         </tbody>

@@ -1,4 +1,7 @@
+$enable-shadows: true;
+
 @import '../../node_modules/bootstrap/scss/bootstrap.scss';
+@import '../../node_modules/bootstrap-icons/font/bootstrap-icons.scss';
 
 main {
     min-height: 100vh;
@@ -17,7 +20,7 @@ main {
 }
 
 #main-content {
-    background-color: var(--bs-tertiary-bg);
+    background-color: rgba(var(--bs-tertiary-bg), 0.5);
     padding: 1em;
     border-radius: var(--bs-border-radius);
     border: var(--bs-border-color) solid 1px;

@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Park index{% endblock %}
+{% block title %}Liste des Parks{% endblock %}
 
 {% block body %}
     <h1>Liste des Parks</h1>
@@ -14,7 +14,9 @@
                 <th>Nom</th>
                 <th>Pays</th>
                 <th>Année d'ouverture</th>
-                <th>Actions</th>
+                <th>Nombre de coasters</th>
+                <th>Modifier</th>
+                <th>Afficher</th>
             </tr>
         </thead>
         <tbody>
@@ -24,14 +26,13 @@
                 <td>{{ park.name }}</td>
                 <td>{{ park.country }}</td>
                 <td>{{ park.openingYear }}</td>
-                <td>
-                    <a href="{{ path('app_park_edit', { id: park.id }) }}" class="btn btn-secondary btn-sm">Modifier</a>
-                    <a href="{{ path('app_park_show', { id: park.id }) }}" class="btn btn-success btn-sm">Afficher</a>
-                </td>
+                <td>{{ park.coasters|length }}</td>
+                <td><a href="{{ path('app_park_edit', { id: park.id }) }}" class="btn btn-secondary btn-sm">Modifier</a></td>
+                <td><a href="{{ path('app_park_show', { id: park.id }) }}" class="btn btn-success btn-sm">Afficher</a></td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="5" class="text-center">Aucun park trouvé.</td>
+                <td colspan="6" class="text-center">Aucun park trouvé.</td>
             </tr>
         {% endfor %}
         </tbody>

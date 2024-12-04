@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CoasterRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -35,6 +37,17 @@ class Coaster
 
     #[ORM\ManyToOne(inversedBy: 'coasters')]
     private ?Park $Park = null;
+
+    /**
+     * @var Collection<int, Category>
+     */
+    #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'Coasters')]
+    private Collection $Categories;
+
+    public function __construct()
+    {
+        $this->Categories = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -109,6 +122,30 @@ class Coaster
     public function setPark(?Park $Park): static
     {
         $this->Park = $Park;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Category>
+     */
+    public function getCategories(): Collection
+    {
+        return $this->Categories;
+    }
+
+    public function addCategory(Category $category): static
+    {
+        if (!$this->Categories->contains($category)) {
+            $this->Categories->add($category);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(Category $category): static
+    {
+        $this->Categories->removeElement($category);
 
         return $this;
     }
