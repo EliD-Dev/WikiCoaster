@@ -40,4 +40,30 @@ class CoasterRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function findFiltered(string $parkId = '', string $categoryId = '', string $search = ''): array
+    {
+        $qb = $this->createQueryBuilder('c')
+            ->leftJoin('c.Park', 'p')
+            ->leftJoin('c.Categories', 'cat') // Jointure avec les catégories
+            ->addSelect('cat'); // Sélectionner les catégories
+
+        // Filtrer par parc si un ID de parc est fourni
+        if ($parkId !== '') {
+            $qb->andWhere('p.id = :parkId')
+                ->setParameter('parkId', (int)$parkId);
+        }
+
+        // Filtrer par catégorie si un ID de catégorie est fourni
+        if ($categoryId !== '') {
+            $qb->andWhere('cat.id = :categoryId')
+                ->setParameter('categoryId', (int)$categoryId);
+        }
+
+        if ($search !== '') {
+            $qb->andWhere('c.name LIKE :search')
+                ->setParameter('search', '%' . $search . '%');
+        }
+
+        return $qb->getQuery()->getResult();
+    }
 }

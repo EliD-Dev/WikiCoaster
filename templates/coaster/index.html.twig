@@ -7,6 +7,36 @@
 
     <a href="{{ path('app_coaster_add') }}" class="btn btn-primary mb-3">Ajouter un Coaster</a>
 
+    <form method="get" action="{{ path('app_coaster_index') }}" class="d-flex flex-column flex-md-row align-items-start">
+        <div class="mr-md-2">
+            <input type="text" id="search" name="search" class="form-control" value="{{ app.request.get('search') }}" placeholder="Recherche.....">
+        </div>
+    
+        <div class="mr-md-2">
+            <select name="park" id="park" class="form-control">
+                <option value="">Tous les parc</option>
+                {% for park in parks %}
+                    <option value="{{ park.id }}" {% if park.id == app.request.get('park') %} selected {% endif %}>
+                        {{ park.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    
+        <div class="mr-md-2">
+            <select name="category" id="category" class="form-control">
+                <option value="">Toutes les catégories</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}" {% if category.id == app.request.get('category') %} selected {% endif %}>
+                        {{ category.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    
+        <button type="submit" class="btn btn-primary mr-md-2">Filtrer</button>
+    </form>    
+
     <table class="table table-striped">
         <thead>
             <tr>

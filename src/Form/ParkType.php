@@ -7,6 +7,7 @@ use Symfony\Component\Intl\Countries;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\CountryType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class ParkType extends AbstractType
@@ -19,10 +20,10 @@ class ParkType extends AbstractType
 
         $builder
             ->add('name', options:['label' => 'Nom du Park',])
-            ->add('country', ChoiceType::class, [
+            ->add('country', CountryType::class, [
                 'label' => 'Pays',
-                'choices' => array_flip(Countries::getNames('fr')),
                 'placeholder' => 'Choisissez le pays du park',
+                'preferred_choices' => ['FR', 'DE', 'BE', 'ES'],
             ])
             ->add('openingYear', ChoiceType::class, [
                 'label' => 'Année d\'ouverture',

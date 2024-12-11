@@ -11,6 +11,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Intl\Countries;
 
 class CoasterType extends AbstractType
 {
@@ -21,7 +22,10 @@ class CoasterType extends AbstractType
             ->add('maxSpeed', options:['label' => 'Vitesse Max du Coaster',])
             ->add('length', options:['label' => 'Longueur du Coaster',])
             ->add('maxHeight', options:['label' => 'Hauteur Max du Coaster',])
-            ->add('park', EntityType::class, ['class' => Park::class,'required' => false,])
+            ->add('park', EntityType::class, ['class' => Park::class,'required' => false,
+                                                'group_by' => function(Park $entity): ?string {
+                                                    return Countries::getName($entity->getCountry());
+                                                },])
             ->add('operating', options:['label' => 'En fonctionnement',])
             ->add('categories', EntityType::class, ['class' => Category::class, 'multiple' => true,'expanded' => true,
                 'query_builder' => function (EntityRepository $er): QueryBuilder {

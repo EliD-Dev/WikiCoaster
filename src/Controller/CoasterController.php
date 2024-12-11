@@ -7,6 +7,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Coaster;
 use App\Repository\CoasterRepository;
+use App\Repository\ParkRepository;
+use App\Repository\CategoryRepository;
 use App\Form\CoasterType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,16 +16,24 @@ use Symfony\Component\HttpFoundation\Request;
 class CoasterController extends AbstractController{
 
     #[Route('/coaster', name: 'app_coaster_index')]
-    public function index(CoasterRepository $coasterRepository): Response
+    public function index(Request $request, CoasterRepository $coasterRepository, ParkRepository $parkRepository, CategoryRepository $categoryRepository): Response
     {
-        // Récupération de tous les coasters depuis la base
-        $coasters = $coasterRepository->findAll();
+        $parks = $parkRepository->findAll();
+        $categories = $categoryRepository->findAll();
 
-        dump($coasters);
+        // Récupérer les filtres de la requête GET
+        $parkId = $request->get('park', '');
+        $categoryId = $request->get('category', '');
+        $search = $request->get('search', '');
 
-        // Affichage de la liste des coasters dans la vue
+        // Appliquer les filtres en appelant la méthode findFiltered
+        $coasters = $coasterRepository->findFiltered($parkId, $categoryId, $search);
+
+        // Passer les données à la vue
         return $this->render('coaster/index.html.twig', [
             'coasters' => $coasters,
+            'parks' => $parks,
+            'categories' => $categories,
         ]);
     }
     
