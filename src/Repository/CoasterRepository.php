@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Coaster;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -40,12 +41,16 @@ class CoasterRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
-    public function findFiltered(string $parkId = '', string $categoryId = '', string $search = ''): array
+    public function findFiltered(string $parkId = '', string $categoryId = '', string $search = '', int $count = 20, int $page = 1): Paginator
     {
+        $begin = ($page - 1) * $count;
+        
         $qb = $this->createQueryBuilder('c')
-            ->leftJoin('c.Park', 'p')
-            ->leftJoin('c.Categories', 'cat') // Jointure avec les catégories
-            ->addSelect('cat'); // Sélectionner les catégories
+                    ->addSelect('p', 'cat')
+                    ->leftJoin('c.Park', 'p')
+                    ->leftJoin('c.Categories', 'cat') // Jointure avec les catégories
+                    ->setMaxResults($count) // LIMIT
+                    ->setFirstResult($begin); // OFFSET
 
         // Filtrer par parc si un ID de parc est fourni
         if ($parkId !== '') {
@@ -64,6 +69,6 @@ class CoasterRepository extends ServiceEntityRepository
                 ->setParameter('search', '%' . $search . '%');
         }
 
-        return $qb->getQuery()->getResult();
+        return new Paginator($qb->getQuery());
     }
 }

@@ -26,15 +26,22 @@ class CoasterController extends AbstractController{
         $categoryId = $request->get('category', '');
         $search = $request->get('search', '');
 
-        // Appliquer les filtres en appelant la méthode findFiltered
-        $coasters = $coasterRepository->findFiltered($parkId, $categoryId, $search);
+        $page = max((int)$request->get('p', 1), 1);
+        $itemCount = 3;
 
-        // Passer les données à la vue
-        return $this->render('coaster/index.html.twig', [
-            'coasters' => $coasters,
-            'parks' => $parks,
-            'categories' => $categories,
-        ]);
+        // Appliquer les filtres en appelant la méthode findFiltered
+        $coasters = $coasterRepository->findFiltered($parkId, $categoryId, $search, $itemCount, $page);
+
+    // Calculer le nombre de pages
+    $pageCount = max(ceil($coasters->count() / $itemCount), 1);
+
+    return $this->render('coaster/index.html.twig', [
+        'coasters' => $coasters,
+        'parks' => $parks,
+        'categories' => $categories,
+        'pageCount' => $pageCount,
+        'currentPage' => $page,
+    ]);
     }
     
     #[Route('/coaster/add', name: 'app_coaster_add')]
