@@ -16,8 +16,13 @@
         <main class="d-flex flex-nowrap">
             <div class="d-flex flex-column flex-shrink-0 shadow" id="side-menu">
                 <div class="lead">Wiki Coaster</div>
-                <a href="{{ path('app_register') }}" class="btn"><i class="bi bi-person-add"></i> Inscription</a>
-                <a href="{{ path('app_login') }}" class="btn"><i class="bi bi-person"></i> Connexion</a>
+                {% if not is_granted('ROLE_USER') %}
+                    <a href="{{ path('app_register') }}" class="btn"><i class="bi bi-person-add"></i> Inscription</a>
+                    <a href="{{ path('app_login') }}" class="btn"><i class="bi bi-person"></i> Connexion</a>
+                {% else %}
+                    <a href="{{ path('app_logout') }}" class="btn"><i class="bi bi-box-arrow-right"></i> Déconnexion</a>
+                {% endif %}
+                <br><br>
                 <a href="{{ path('app_user_index') }}" class="btn"><i class="bi bi-people"></i> User</a>
                 <a href="{{ path('app_coaster_index') }}" class="btn"><i class="bi bi-minecart"></i> Coaster</a>
                 <a href="{{ path('app_park_index') }}" class="btn"><i class="bi bi-map"></i> Park</a>

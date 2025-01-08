@@ -15,8 +15,10 @@
                 <th>Pays</th>
                 <th>Année d'ouverture</th>
                 <th>Nombre de coasters</th>
-                <th>Modifier</th>
-                <th>Afficher</th>
+                {% if is_granted('ROLE_USER') %}
+                    <th>Modifier</th>
+                    <th>Supprimer</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -27,8 +29,10 @@
                 <td>{{ park.country }}</td>
                 <td>{{ park.openingYear }}</td>
                 <td>{{ park.coasters|length }}</td>
-                <td><a href="{{ path('app_park_edit', { id: park.id }) }}" class="btn btn-secondary btn-sm">Modifier</a></td>
-                <td><a href="{{ path('app_park_show', { id: park.id }) }}" class="btn btn-success btn-sm">Afficher</a></td>
+                {% if is_granted('ROLE_USER') %}
+                    <td><a href="{{ path('app_park_edit', { id: park.id }) }}" class="btn btn-secondary btn-sm">Modifier</a></td>
+                    <td><a href="{{ path('app_park_show', { id: park.id }) }}" class="btn btn-success btn-sm">Afficher</a></td>
+                {% endif %}
             </tr>
         {% else %}
             <tr>

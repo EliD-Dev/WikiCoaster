@@ -10,11 +10,20 @@ use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Intl\Countries;
 
 class CoasterType extends AbstractType
 {
+    private readonly AuthorizationCheckerInterface $authorizationChecker;
+
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
+    {
+        $this->authorizationChecker = $authorizationChecker;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -34,6 +43,10 @@ class CoasterType extends AbstractType
                                     },
             ])
         ;
+
+        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            $builder->add('published', options:['label' => 'Publié','required' => false,]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void

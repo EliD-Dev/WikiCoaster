@@ -41,6 +41,7 @@
         <thead>
             <tr>
                 <th>ID</th>
+                <th>Auteur</th>
                 <th>Nom</th>
                 <th>Vitesse max</th>
                 <th>Longueur</th>
@@ -58,6 +59,13 @@
             {% for coaster in coasters %}
                 <tr>
                     <td>{{ coaster.id }}</td>
+                    <td>
+                        {% if coaster.author is not null %}
+                            {{ coaster.author.username }}
+                        {% else %}
+                            <em>Pas d'auteur</em>
+                        {% endif %}
+                    </td>
                     <td>{{ coaster.name }}</td>
                     <td>{{ coaster.maxSpeed }}km/h</td>
                     <td>{{ coaster.length }}m</td>

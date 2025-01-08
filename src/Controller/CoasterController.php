@@ -5,6 +5,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Entity\Coaster;
 use App\Repository\CoasterRepository;
 use App\Repository\ParkRepository;
@@ -45,8 +46,11 @@ class CoasterController extends AbstractController{
     }
     
     #[Route('/coaster/add', name: 'app_coaster_add')]
+    #[IsGranted('ROLE_USER')]
     public function add(Request $request, EntityManagerInterface $em): Response {
         $coaster = new Coaster();
+        $user = $this->getUser();
+        $coaster->setAuthor($user);
         $form = $this->createForm(CoasterType::class, $coaster);
 
         $form->handleRequest($request);
@@ -65,6 +69,9 @@ class CoasterController extends AbstractController{
 
     #[Route('/coaster/{id}/edit', name: 'app_coaster_edit')]
     public function edit(Coaster $coaster, Request $request, EntityManagerInterface $em): Response {
+        // Vérifie si l'utilisateur a le droit de modifier ce coaster
+        $this->denyAccessUnlessGranted('EDIT', $coaster);
+
         $form = $this->createForm(CoasterType::class, $coaster);
         $form->handleRequest($request);
 
