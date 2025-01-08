@@ -5,8 +5,6 @@
 {% block body %}
     <h1>Liste des utilisateurs</h1>
 
-    <a href="{{ path('app_user_new') }}" class="btn btn-primary mb-3">Ajouter un Utilisateur</a>
-
     <table class="table">
         <thead>
             <tr>
@@ -27,9 +25,17 @@
                 <td>{{ user.username }}</td>
                 <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
                 <td>{{ user.email }}</td>
-                {% if is_granted('ROLE_USER') %}
+                {% if is_granted('ROLE_ADMIN') %}
                     <td><a href="{{ path('app_user_edit', { id: user.id }) }}" class="btn btn-secondary btn-sm">Modifier</a></td>
                     <td><a href="{{ path('app_user_show', { id: user.id }) }}" class="btn btn-success btn-sm">Afficher</a></td>
+                {% elseif is_granted('ROLE_USER') %}
+                    {% if user.id == app.user.id %}
+                        <td><a href="{{ path('app_user_edit', { id: user.id }) }}" class="btn btn-secondary btn-sm">Modifier</a></td>
+                        <td><a href="{{ path('app_user_show', { id: user.id }) }}" class="btn btn-success btn-sm">Afficher</a></td>
+                    {% else %}
+                        <td><a href="#" class="btn btn-danger btn-sm">Admin</a></td>
+                        <td><a href="#" class="btn btn-danger btn-sm">Admin</a></td>
+                    {% endif %}
                 {% endif %}
             </tr>
         {% else %}

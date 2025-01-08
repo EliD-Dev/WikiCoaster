@@ -15,7 +15,13 @@
     <body>
         <main class="d-flex flex-nowrap">
             <div class="d-flex flex-column flex-shrink-0 shadow" id="side-menu">
-                <div class="lead">Wiki Coaster</div>
+                <div class="lead">
+                    Wiki Coaster
+                    {% if is_granted('ROLE_USER') %}
+                        <br>
+                        {{ app.user.username }}
+                    {% endif %}
+                </div>
                 {% if not is_granted('ROLE_USER') %}
                     <a href="{{ path('app_register') }}" class="btn"><i class="bi bi-person-add"></i> Inscription</a>
                     <a href="{{ path('app_login') }}" class="btn"><i class="bi bi-person"></i> Connexion</a>

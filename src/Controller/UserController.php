@@ -31,6 +31,13 @@ final class UserController extends AbstractController{
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($form->get('estAdmin')->getData()) {
+                $user->setRoles(['ROLE_ADMIN']);
+            }
+            else {
+                $user->setRoles(['ROLE_USER']); // Par défaut
+            }
+
             $entityManager->persist($user);
             $entityManager->flush();
 
@@ -58,6 +65,13 @@ final class UserController extends AbstractController{
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($form->get('estAdmin')->getData()) {
+                $user->setRoles(['ROLE_ADMIN']);
+            }
+            else {
+                $user->setRoles(['ROLE_USER']); // Par défaut
+            }
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
