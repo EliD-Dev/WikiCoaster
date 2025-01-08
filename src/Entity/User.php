@@ -158,11 +158,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeCoaster(Coaster $coaster): static
     {
-        if ($this->coasters->removeElement($coaster)) {
+        if ($this->coasters->removeElement($coaster) && $coaster->getAuthor() === $this) {
             // set the owning side to null (unless already changed)
-            if ($coaster->getAuthor() === $this) {
-                $coaster->setAuthor(null);
-            }
+            $coaster->setAuthor(null);
         }
 
         return $this;
