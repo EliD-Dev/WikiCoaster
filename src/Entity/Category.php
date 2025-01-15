@@ -17,7 +17,7 @@ class Category
     private ?int $id = null;
 
     #[ORM\Column(length: 80)]
-    #[Assert\NotBlank()]
+    #[Assert\NotBlank(message: 'Le nom est obligatoire.')]
     private ?string $name = null;
 
     #[ORM\Column(length: 7)]
@@ -80,11 +80,12 @@ class Category
     {
         if (!$this->Coasters->contains($coaster)) {
             $this->Coasters->add($coaster);
-            $coaster->addCategory($this);
+            $coaster->addCategory($this); // Assurez la cohérence bidirectionnelle
         }
 
         return $this;
     }
+
 
     public function removeCoaster(Coaster $coaster): static
     {
@@ -93,5 +94,16 @@ class Category
         }
 
         return $this;
+    }
+
+    public function getInvertedColor(): string
+    {
+        // Convertir le code hexadécimal en RGB
+        $r = 255 - hexdec(substr($this->color, 1, 2));
+        $g = 255 - hexdec(substr($this->color, 3, 2));
+        $b = 255 - hexdec(substr($this->color, 5, 2));
+
+        // Reconvertir en code hexadécimal
+        return sprintf('#%02X%02X%02X', $r, $g, $b);
     }
 }

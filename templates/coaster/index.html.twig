@@ -7,14 +7,14 @@
 
     <a href="{{ path('app_coaster_add') }}" class="btn btn-primary mb-3">Ajouter un Coaster</a>
 
-    <form method="get" action="{{ path('app_coaster_index') }}" class="d-flex flex-column flex-md-row align-items-start">
-        <div class="mr-md-2">
-            <input type="text" id="search" name="search" class="form-control" value="{{ app.request.get('search') }}" placeholder="Recherche.....">
+    <form method="get" action="{{ path('app_coaster_index') }}" class="d-flex flex-wrap gap-2 align-items-start">
+        <div>
+            <input type="text" id="search" name="search" class="form-control mb-2" value="{{ app.request.get('search') }}" placeholder="Recherche.....">
         </div>
     
-        <div class="mr-md-2">
-            <select name="park" id="park" class="form-control">
-                <option value="">Tous les parc</option>
+        <div>
+            <select name="park" id="park" class="form-control mb-2">
+                <option value="">Tous les parcs</option>
                 {% for park in parks %}
                     <option value="{{ park.id }}" {% if park.id == app.request.get('park') %} selected {% endif %}>
                         {{ park.name }}
@@ -23,8 +23,8 @@
             </select>
         </div>
     
-        <div class="mr-md-2">
-            <select name="category" id="category" class="form-control">
+        <div>
+            <select name="category" id="category" class="form-control mb-2">
                 <option value="">Toutes les catégories</option>
                 {% for category in categories %}
                     <option value="{{ category.id }}" {% if category.id == app.request.get('category') %} selected {% endif %}>
@@ -34,8 +34,22 @@
             </select>
         </div>
     
-        <button type="submit" class="btn btn-primary mr-md-2">Filtrer</button>
-    </form>    
+        {% if is_granted('ROLE_ADMIN') %}
+            <div>
+                <select name="published" id="published" class="form-control mb-2">
+                    <option value="">Tous les statuts</option>
+                    <option value="1" {% if app.request.get('published') == '1' %} selected {% endif %}>Afficher</option>
+                    <option value="0" {% if app.request.get('published') == '0' %} selected {% endif %}>Cacher</option>
+                </select>
+            </div>
+        {% endif %}
+    
+        <button type="submit" class="btn btn-primary mb-2">Filtrer</button>
+    </form>
+
+    {% if coasters|length > 0 %}
+        <p>{{ coasters|length }} coaster(s) trouvé(s).</p>
+    {% endif %}        
 
     <table class="table table-striped">
         <thead>
@@ -49,9 +63,13 @@
                 <th>En fonctionnement</th>
                 <th>Park</th>
                 <th>Catégories</th>
+                <th>Image</th>
                 {% if is_granted('ROLE_USER') %}
                     <th>Modifier</th>
                     <th>Supprimer</th>
+                {% endif %}
+                {% if is_granted('ROLE_ADMIN') %}
+                    <th>Public</th>
                 {% endif %}
             </tr>
         </thead>
@@ -79,17 +97,52 @@
                             </span>
                         {% endfor %}
                     </td>
+                    <td>
+                        {% if coaster.imageFileName is not null %}
+                            <!-- Bouton Voir -->
+                            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#imageModal{{ coaster.id }}">
+                                Voir
+                            </button>
+                        {% else %}
+                            <em>Pas d'image</em>
+                        {% endif %}
+                    </td>                    
                     {% if is_granted('ROLE_USER') %}
                         <td><a href="{{ path('app_coaster_edit', { id: coaster.id }) }}" class="btn btn-secondary btn-sm">Modifier</a></td>
                         <td><a href="{{ path('app_coaster_delete', { id: coaster.id }) }}" class="btn btn-danger btn-sm">Supprimer</a></td>
                     {% endif %}
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <td>{{ coaster.published ? 'Afficher' : 'Cacher' }}</td>
+                    {% endif %}
                 </tr>
+
+                <!-- Modal pour l'image -->
+                <div class="modal fade" id="imageModal{{ coaster.id }}" tabindex="-1" aria-labelledby="imageModalLabel{{ coaster.id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" style="max-width: 80%; height: auto;">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="imageModalLabel{{ coaster.id }}">Image du Coaster</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <img src="{{ asset('uploads/' ~ coaster.imageFileName) }}" alt="Coaster" class="img-fluid">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             {% else %}
                 <tr>
-                    <td colspan="10" class="text-center">Aucun coaster trouvé.</td>
+                    <td colspan="13" class="text-center">Aucun coaster trouvé.</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+
     {% include "utils/_pagination.html.twig" with {'route': 'app_coaster_index', 'pageCount': pageCount, 'currentPage': currentPage} %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <!-- Script pour gérer le modal -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 {% endblock %}

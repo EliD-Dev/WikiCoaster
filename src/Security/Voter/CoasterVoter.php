@@ -10,8 +10,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 final class CoasterVoter extends Voter{
-    public const EDIT = 'POST_EDIT';
-    public const VIEW = 'POST_VIEW';
+    public const EDIT = 'EDIT';
+    public const VIEW = 'VIEW';
 
     private readonly AuthorizationCheckerInterface $authorizationChecker;
 
@@ -23,7 +23,7 @@ final class CoasterVoter extends Voter{
     protected function supports(string $attribute, $subject): bool
     {
         // On supporte l'attribut 'EDIT' et le sujet est un coaster
-        if ($attribute === 'EDIT' && $subject instanceof Coaster) {
+        if ($attribute === self::EDIT && $subject instanceof Coaster) {
             return true;
         }
 
@@ -32,22 +32,25 @@ final class CoasterVoter extends Voter{
 
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
-        $user = $token->getUser();
+        $user = $token->getUser(); // On récupère l'utilisateur connecté
+
+        /*$result = false;
     
-        if (!$user instanceof User) {
-            return false;
-        }
+        if ($user instanceof User) {
+            // Si l'utilisateur est un administrateur, il peut tout faire
+            if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+                $result = true;
+            }
+            elseif ($attribute === 'EDIT' && $subject instanceof Coaster) {
+                // Si l'attribut est 'EDIT' et que l'utilisateur est l'auteur du coaster, il peut modifier
+                $result = $subject->getAuthor() === $user;
+            }
+        }*/
     
-        // Si l'utilisateur est un administrateur, il peut tout faire
-        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
-            return true;
-        }
-    
-        // Si l'attribut est 'EDIT' et que l'utilisateur est l'auteur du coaster, il peut modifier
-        if ($attribute === 'EDIT' && $subject instanceof Coaster) {
-            return $subject->getAuthor() === $user;
-        }
-    
-        return false;
+        return match ($attribute) {
+            self::EDIT => $subject->getAuthor() == $user || $this->authorizationChecker->isGranted('ROLE_ADMIN'), // Si l'utilisateur est l'auteur du coaster ou un administrateur, il peut modifier
+            self::VIEW => true, // On autorise la vue par défaut
+            default => false, // On refuse par défaut
+        };
     }
 }

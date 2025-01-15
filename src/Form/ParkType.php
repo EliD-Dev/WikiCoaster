@@ -24,6 +24,7 @@ class ParkType extends AbstractType
                 'label' => 'Pays',
                 'placeholder' => 'Choisissez le pays du park',
                 'preferred_choices' => ['FR', 'DE', 'BE', 'ES'],
+                'choice_translation_locale' => 'fr',
             ])
             ->add('openingYear', ChoiceType::class, [
                 'label' => 'Année d\'ouverture',

@@ -17,25 +17,26 @@ class Coaster
     private ?int $id = null;
 
     #[ORM\Column(length: 80)]
-    #[Assert\NotBlank()]
+    #[Assert\NotBlank(message: 'Le nom est obligatoire.')]
     private ?string $name = null;
 
     #[ORM\Column(nullable: true)]
-    #[Assert\Positive()]
+    #[Assert\Positive(message: 'La vitesse maximale doit être un nombre positif.')]
     private ?int $maxSpeed = null;
 
     #[ORM\Column(nullable: true)]
-    #[Assert\Positive()]
+    #[Assert\Positive(message: 'La longeur maximale doit être un nombre positif.')]
     private ?int $length = null;
 
-    #[ORM\Column(nullable: true)]
-    #[Assert\Positive()]
+    #[ORM\Column(nullable: false)]
+    #[Assert\Positive(message: 'La hauteur maximale doit être un nombre positif.')]
     private ?int $maxHeight = null;
 
     #[ORM\Column]
     private ?bool $operating = true;
 
     #[ORM\ManyToOne(inversedBy: 'coasters')]
+    #[Assert\NotBlank(message: 'Un Park doit être sélectionné.')]
     private ?Park $Park = null;
 
     /**
@@ -49,6 +50,9 @@ class Coaster
 
     #[ORM\Column(nullable: true)]
     private ?bool $published = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $imageFileName = null;
 
     public function __construct()
     {
@@ -110,7 +114,7 @@ class Coaster
 
     public function isOperating(): ?bool
     {
-        return $this->operating;
+        return $this->operating ?? false;
     }
 
     public function setOperating(bool $operating): static
@@ -144,10 +148,12 @@ class Coaster
     {
         if (!$this->Categories->contains($category)) {
             $this->Categories->add($category);
+            $category->addCoaster($this); // Assurez la cohérence bidirectionnelle
         }
 
         return $this;
     }
+
 
     public function removeCategory(Category $category): static
     {
@@ -170,12 +176,24 @@ class Coaster
 
     public function isPublished(): ?bool
     {
-        return $this->published;
+        return $this->published ?? false;
     }
 
     public function setPublished(?bool $published): static
     {
         $this->published = $published;
+
+        return $this;
+    }
+
+    public function getImageFileName(): ?string
+    {
+        return $this->imageFileName;
+    }
+
+    public function setImageFileName(?string $imageFileName): static
+    {
+        $this->imageFileName = $imageFileName;
 
         return $this;
     }

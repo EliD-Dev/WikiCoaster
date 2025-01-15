@@ -7,6 +7,10 @@
 
     <a href="{{ path('app_park_new') }}" class="btn btn-primary mb-3">Ajouter un Park</a>
 
+    {% if parks|length > 0 %}
+        <p>{{ parks|length }} park(s) trouvé(s).</p>
+    {% endif %}
+
     <table class="table">
         <thead>
             <tr>

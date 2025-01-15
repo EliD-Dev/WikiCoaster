@@ -17,7 +17,11 @@
             </tr>
             <tr>
                 <th>Couleur</th>
-                <td>{{ category.color }}</td>
+                <td>
+                    <div class="d-inline-block p-2 rounded" style="background-color: {{ category.color }}; color: {{ category.getInvertedColor() }};">
+                        {{ category.color }}
+                    </div>
+                </td>
             </tr>
         </tbody>
     </table>

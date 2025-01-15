@@ -45,7 +45,7 @@ class CoasterRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
-    public function findFiltered(string $parkId = '', string $categoryId = '', string $search = '', int $count = 20, int $page = 1): Paginator
+    public function findFiltered(string $parkId = '', string $categoryId = '', string $search = '', string $published = '' ,int $count = 20, int $page = 1): Paginator
     {
         $begin = ($page - 1) * $count;
         
@@ -66,6 +66,11 @@ class CoasterRepository extends ServiceEntityRepository
         if ($categoryId !== '') {
             $qb->andWhere('cat.id = :categoryId')
                 ->setParameter('categoryId', (int)$categoryId);
+        }
+
+        if ($published !== null && $published !== '') {
+            $qb->andWhere('c.published = :published')
+                         ->setParameter('published', (bool) $published);
         }
 
         if ($search !== '') {

@@ -4,6 +4,10 @@
 
 {% block body %}
     <h1>Liste des utilisateurs</h1>
+    
+    {% if users|length > 0 %}
+        <p>{{ users|length }} utilisateur(s) trouvé(s).</p>
+    {% endif %}
 
     <table class="table">
         <thead>

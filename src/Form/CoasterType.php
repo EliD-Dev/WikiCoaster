@@ -12,6 +12,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Validator\Constraints\Image;
 use Symfony\Component\Intl\Countries;
 
 class CoasterType extends AbstractType
@@ -31,8 +33,9 @@ class CoasterType extends AbstractType
             ->add('length', options:['label' => 'Longueur du Coaster',])
             ->add('maxHeight', options:['label' => 'Hauteur Max du Coaster',])
             ->add('park', EntityType::class, ['class' => Park::class,'required' => false,
+                                                'placeholder' => 'Sélectionner un Park',
                                                 'group_by' => function(Park $entity): ?string {
-                                                    return Countries::getName($entity->getCountry());
+                                                    return Countries::getName($entity->getCountry(), 'fr');
                                                 },])
             ->add('operating', options:['label' => 'En fonctionnement',])
             ->add('categories', EntityType::class, ['class' => Category::class, 'multiple' => true,'expanded' => true,
@@ -41,6 +44,17 @@ class CoasterType extends AbstractType
                                             ->orderBy('c.name', 'ASC');
                                     },
             ])
+            ->add('image', FileType::class, [
+                'label' => 'Image du Coaster (jpg, png)',
+                'mapped' => false, // Ne lie pas ce champ à la propriété de l'entité
+                'required' => false, // Optionnel
+                'constraints' => [
+                    new Image([
+                        'maxSize' => '2M',
+                        'mimeTypes' => ['image/jpeg', 'image/png'],
+                        'mimeTypesMessage' => 'Veuillez télécharger une image valide (jpg ou png)',
+                    ])
+                ],])
         ;
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {

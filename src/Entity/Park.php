@@ -17,10 +17,11 @@ class Park
     private ?int $id = null;
 
     #[ORM\Column(length: 80)]
-    #[Assert\NotBlank()]
+    #[Assert\NotBlank(message: 'Le nom est obligatoire.')]
     private ?string $name = null;
 
     #[ORM\Column(length: 2)]
+    #[Assert\NotBlank(message: 'Un Pays doit être sélectionné.')]
     private ?string $country = null;
 
     #[ORM\Column(nullable: true)]

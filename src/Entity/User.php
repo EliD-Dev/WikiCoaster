@@ -23,7 +23,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
-    #[Assert\NotBlank()]
+    #[Assert\NotBlank(message: 'Le nom d\'utilisateur est obligatoire.')]
     private ?string $username = null;
 
     /**
@@ -36,9 +36,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Assert\NotBlank(message: 'Le mot de passe est obligatoire.')]
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'L\'email est obligatoire.')]
     private ?string $email = null;
 
     /**
