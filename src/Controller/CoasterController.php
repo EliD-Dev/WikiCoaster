@@ -13,14 +13,14 @@ use App\Repository\CategoryRepository;
 use App\Form\CoasterType;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\TextUI\XmlConfiguration\File;
-use App\Service\FileUploader;
+use App\Service\LocalFileUploader;
 use Symfony\Component\HttpFoundation\Request;
 
 class CoasterController extends AbstractController{
 
-    private FileUploader $fileUploader;
+    private LocalFileUploader $fileUploader;
 
-    public function __construct(FileUploader $fileUploader)
+    public function __construct(LocalFileUploader $fileUploader)
     {
         $this->fileUploader = $fileUploader;
     }
@@ -43,16 +43,16 @@ class CoasterController extends AbstractController{
         // Appliquer les filtres en appelant la méthode findFiltered
         $coasters = $coasterRepository->findFiltered($parkId, $categoryId, $search, $published, $itemCount, $page);
 
-    // Calculer le nombre de pages
-    $pageCount = max(ceil($coasters->count() / $itemCount), 1);
+        // Calculer le nombre de pages
+        $pageCount = max(ceil($coasters->count() / $itemCount), 1);
 
-    return $this->render('coaster/index.html.twig', [
-        'coasters' => $coasters,
-        'parks' => $parks,
-        'categories' => $categories,
-        'pageCount' => $pageCount,
-        'currentPage' => $page,
-    ]);
+        return $this->render('coaster/index.html.twig', [
+            'coasters' => $coasters,
+            'parks' => $parks,
+            'categories' => $categories,
+            'pageCount' => $pageCount,
+            'currentPage' => $page,
+        ]);
     }
     
     #[Route('/coaster/add', name: 'app_coaster_add')]
@@ -90,11 +90,8 @@ class CoasterController extends AbstractController{
         // Vérifie si l'utilisateur a le droit de modifier ce coaster
         $this->denyAccessUnlessGranted('EDIT', $coaster);
 
-        $filePath = $this->getParameter('kernel.project_dir').'/public/uploads/'.$coaster->getImageFileName();
-
-        if (file_exists($filePath)) {
-            unlink($filePath);
-        }
+        $fileName = $coaster->getImageFileName();
+        $this->fileUploader->remove($fileName);
 
         $form = $this->createForm(CoasterType::class, $coaster);
         $form->handleRequest($request);
@@ -114,11 +111,8 @@ class CoasterController extends AbstractController{
     public function delete(Coaster $coaster, Request $request, EntityManagerInterface $em): Response {
         // Vérifier la validité du token CSRF
         if ($this->isCsrfTokenValid('delete' . $coaster->getId(), $request->request->get('_token'))) {
-            $filePath = $this->getParameter('kernel.project_dir').'/public/uploads/'.$coaster->getImageFileName();
-
-            if (file_exists($filePath)) {
-                unlink($filePath);
-            }
+            $fileName = $coaster->getImageFileName();
+            $this->fileUploader->remove($fileName);
 
             $em->remove($coaster);
             $em->flush();

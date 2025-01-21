@@ -7,6 +7,14 @@
 
     <a href="{{ path('app_category_new') }}" class="btn btn-primary mb-3">Ajouter une Catégorie</a>
 
+    <form method="get" action="{{ path('app_category_index') }}" class="d-flex flex-wrap gap-2 align-items-start">
+        <div>
+            <input type="text" id="search" name="search" class="form-control mb-2" value="{{ app.request.get('search') }}" placeholder="Recherche.....">
+        </div>
+    
+        <button type="submit" class="btn btn-primary mb-2">Filtrer</button>
+    </form>
+
     {% if categories|length > 0 %}
         <p>{{ categories|length }} catégorie(s) trouvé(s).</p>
     {% endif %}
@@ -45,4 +53,6 @@
         {% endfor %}
         </tbody>
     </table>
+
+    {% include "utils/_pagination.html.twig" with {'route': 'app_category_index', 'pageCount': pageCount, 'currentPage': currentPage} %}
 {% endblock %}

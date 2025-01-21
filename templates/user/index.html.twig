@@ -4,6 +4,22 @@
 
 {% block body %}
     <h1>Liste des utilisateurs</h1>
+
+    <form method="get" action="{{ path('app_user_index') }}" class="d-flex flex-wrap gap-2 align-items-start">
+        <div>
+            <input type="text" id="search" name="search" class="form-control mb-2" value="{{ app.request.get('search') }}" placeholder="Recherche.....">
+        </div>
+
+        <div>
+            <select name="role" id="role" class="form-control mb-2">
+                <option value="">Tous les rôles</option>
+                <option value="ROLE_USER" {% if app.request.get('role') == 'ROLE_USER' %} selected {% endif %}>Utilisateur</option>
+                <option value="ROLE_ADMIN" {% if app.request.get('role') == 'ROLE_ADMIN' %} selected {% endif %}>Admin</option>
+            </select>
+        </div>
+    
+        <button type="submit" class="btn btn-primary mb-2">Filtrer</button>
+    </form>
     
     {% if users|length > 0 %}
         <p>{{ users|length }} utilisateur(s) trouvé(s).</p>
@@ -49,4 +65,6 @@
         {% endfor %}
         </tbody>
     </table>
+
+    {% include "utils/_pagination.html.twig" with {'route': 'app_user_index', 'pageCount': pageCount, 'currentPage': currentPage} %}
 {% endblock %}

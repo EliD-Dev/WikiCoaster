@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Category;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use Symfony\Bundle\SecurityBundle\Security;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -11,9 +13,28 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class CategoryRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private readonly Security $security;
+
+    public function __construct(ManagerRegistry $registry, Security $security)
     {
         parent::__construct($registry, Category::class);
+        $this->security = $security;
+    }
+
+    public function findFiltered(string $search = '', int $count = 20, int $page = 1): Paginator
+    {
+        $begin = ($page - 1) * $count;
+
+        $qb = $this->createQueryBuilder('c')
+            ->setMaxResults($count)
+            ->setFirstResult($begin);
+
+        if ($search !== '') {
+            $qb->andWhere('c.name LIKE :search')
+                ->setParameter('search', "%$search%");
+        }
+
+        return new Paginator($qb->getQuery());
     }
 
 //    /**

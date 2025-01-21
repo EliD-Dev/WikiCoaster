@@ -7,6 +7,25 @@
 
     <a href="{{ path('app_park_new') }}" class="btn btn-primary mb-3">Ajouter un Park</a>
 
+    <form method="get" action="{{ path('app_park_index') }}" class="d-flex flex-wrap gap-2 align-items-start">
+        <div>
+            <input type="text" id="search" name="search" class="form-control mb-2" value="{{ app.request.get('search') }}" placeholder="Recherche.....">
+        </div>
+    
+        <div>
+            <select name="pays" id="pays" class="form-control mb-2">
+                <option value="">Tous les pays</option>
+                {% for country in allCountries %}
+                    <option value="{{ country.country }}" {% if country.country == app.request.get('pays') %} selected {% endif %}>
+                        {{ country.country }}
+                    </option>
+                {% endfor %}
+            </select>            
+        </div>
+    
+        <button type="submit" class="btn btn-primary mb-2">Filtrer</button>
+    </form>
+
     {% if parks|length > 0 %}
         <p>{{ parks|length }} park(s) trouvé(s).</p>
     {% endif %}
@@ -45,4 +64,6 @@
         {% endfor %}
         </tbody>
     </table>
+
+    {% include "utils/_pagination.html.twig" with {'route': 'app_park_index', 'pageCount': pageCount, 'currentPage': currentPage} %}
 {% endblock %}

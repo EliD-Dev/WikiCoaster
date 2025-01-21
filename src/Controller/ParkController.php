@@ -15,10 +15,26 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/park')]
 final class ParkController extends AbstractController{
     #[Route(name: 'app_park_index', methods: ['GET'])]
-    public function index(ParkRepository $parkRepository): Response
+    public function index(Request $request, ParkRepository $parkRepository): Response
     {
+        $search = $request->get('search', '');
+        $pays = $request->get('pays', '');
+
+        $page = max((int)$request->get('p', 1), 1);
+        $itemCount = 3;
+
+        // Récupérer tous les pays distincts
+        $allCountries = $parkRepository->findAllCountries();
+
+        $parks = $parkRepository->findFiltered($search, $pays, $itemCount, $page);
+
+        $pageCount = max(ceil($parks->count() / $itemCount), 1);
+
         return $this->render('park/index.html.twig', [
-            'parks' => $parkRepository->findAll(),
+            'parks' => $parks,
+            'allCountries' => $allCountries,
+            'pageCount' => $pageCount,
+            'currentPage' => $page,
         ]);
     }
 

@@ -15,10 +15,22 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/user')]
 final class UserController extends AbstractController{
     #[Route(name: 'app_user_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository): Response
+    public function index(Request $request, UserRepository $userRepository): Response
     {
+        $search = $request->get('search', '');
+        $role = $request->get('role', '');
+
+        $page = max((int)$request->get('p', 1), 1);
+        $itemCount = 3;
+
+        $users = $userRepository->findFiltered($search, $role, $itemCount, $page);
+
+        $pageCount = max(ceil($users->count() / $itemCount), 1);
+
         return $this->render('user/index.html.twig', [
-            'users' => $userRepository->findAll(),
+            'users' => $users,
+            'pageCount' => $pageCount,
+            'currentPage' => $page,
         ]);
     }
 

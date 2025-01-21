@@ -15,10 +15,21 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/category')]
 final class CategoryController extends AbstractController{
     #[Route(name: 'app_category_index', methods: ['GET'])]
-    public function index(CategoryRepository $categoryRepository): Response
+    public function index(Request $request, CategoryRepository $categoryRepository): Response
     {
+        $search = $request->get('search', '');
+
+        $page = max((int)$request->get('p', 1), 1);
+        $itemCount = 3;
+
+        $categorys = $categoryRepository->findFiltered($search, $itemCount, $page);
+
+        $pageCount = max(ceil($categorys->count() / $itemCount), 1);
+
         return $this->render('category/index.html.twig', [
-            'categories' => $categoryRepository->findAll(),
+            'categories' => $categorys,
+            'pageCount' => $pageCount,
+            'currentPage' => $page,
         ]);
     }
 

@@ -22,7 +22,7 @@ services:
             - '../src/Kernel.php'
 
     # controllers are imported separately to make sure services can be injected
-    App\Service\FileUploader:
+    App\Service\LocalFileUploader:
         arguments:
             $uploadFolder: '%upload_directory%'
 
