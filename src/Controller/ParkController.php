@@ -68,6 +68,7 @@ final class ParkController extends AbstractController{
     }
 
     #[Route('/{id}/edit', name: 'app_park_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function edit(Request $request, Park $park, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(ParkType::class, $park);
@@ -86,6 +87,7 @@ final class ParkController extends AbstractController{
     }
 
     #[Route('/{id}', name: 'app_park_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
     public function delete(Request $request, Park $park, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$park->getId(), $request->getPayload()->getString('_token'))) {

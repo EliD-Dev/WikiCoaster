@@ -86,12 +86,15 @@ class CoasterController extends AbstractController{
     }
 
     #[Route('/coaster/{id}/edit', name: 'app_coaster_edit')]
+    #[IsGranted('ROLE_USER')]
     public function edit(Coaster $coaster, Request $request, EntityManagerInterface $em): Response {
         // Vérifie si l'utilisateur a le droit de modifier ce coaster
         $this->denyAccessUnlessGranted('EDIT', $coaster);
 
         $fileName = $coaster->getImageFileName();
-        $this->fileUploader->remove($fileName);
+        if ($fileName) {
+            $this->fileUploader->remove($fileName);
+        }
 
         $form = $this->createForm(CoasterType::class, $coaster);
         $form->handleRequest($request);
@@ -108,11 +111,14 @@ class CoasterController extends AbstractController{
     }
 
     #[Route('/coaster/{id}/delete', name: 'app_coaster_delete')]
+    #[IsGranted('ROLE_USER')]
     public function delete(Coaster $coaster, Request $request, EntityManagerInterface $em): Response {
         // Vérifier la validité du token CSRF
         if ($this->isCsrfTokenValid('delete' . $coaster->getId(), $request->request->get('_token'))) {
             $fileName = $coaster->getImageFileName();
-            $this->fileUploader->remove($fileName);
+            if ($fileName) {
+                $this->fileUploader->remove($fileName);
+            }
 
             $em->remove($coaster);
             $em->flush();
